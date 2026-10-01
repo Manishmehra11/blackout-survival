@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#05080f" />
+  <meta name="description" content="BLACKOUT: Survival Protocol — a real-time multiplayer thriller for 2–8 players." />
+  <title>BLACKOUT // Survival Protocol</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="noise"></div>
+  <div class="scanlines"></div>
+  <div id="particles"></div>
+  <div class="top-hud">
+    <div class="brand"><span class="brand-mark">◈</span> BLACKOUT <span class="brand-sub">// SURVIVAL PROTOCOL</span></div>
+    <div class="hud-right">
+      <span id="connectionDot" class="connection"><i></i> CONNECTING</span>
+      <button id="soundBtn" class="icon-btn" aria-label="Toggle sound">🔊</button>
+    </div>
+  </div>
+
+  <main>
+    <section id="screenLanding" class="screen active">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="pulse-dot"></span> FACILITY 09 // EMERGENCY NETWORK ONLINE</div>
+          <h1>WHEN THE LIGHTS<br><span>GO OUT</span>, CHOOSE.</h1>
+          <p class="hero-text">A real-time multiplayer survival thriller. Read your private clue. Trust the room. Make the wrong call and the facility chooses who disappears.</p>
+          <div class="hero-stats">
+            <div><strong>2–8</strong><small>PLAYERS</small></div>
+            <div><strong>14s</strong><small>DECISION WINDOW</small></div>
+            <div><strong>1</strong><small>SURVIVOR</small></div>
+          </div>
+        </div>
+        <div class="terminal-card glass">
+          <div class="terminal-header"><span>MISSION TERMINAL</span><span class="status-live">● LIVE</span></div>
+          <div class="terminal-screen">
+            <div class="terminal-line dim">> booting facility network...</div>
+            <div class="terminal-line">> life support: <b>UNSTABLE</b></div>
+            <div class="terminal-line">> external comms: <b>OFFLINE</b></div>
+            <div class="terminal-line">> biometric count: <b>UNKNOWN</b></div>
+            <div class="terminal-line danger">> survival protocol: <b>ARMED</b></div>
+            <div class="terminal-cursor">█</div>
+          </div>
+          <button id="createBtn" class="primary-btn">CREATE MISSION <span>→</span></button>
+          <button id="joinBtn" class="secondary-btn">JOIN BY ROOM CODE</button>
+        </div>
+      </div>
+      <div class="warning-bar"><span>⚠</span> NO LOGINS. NO INSTALLS. ONE ROOM CODE. THE FACILITY DOES NOT FORGIVE.</div>
+    </section>
+
+    <section id="screenName" class="screen centered">
+      <div class="modal-card glass">
+        <div class="eyebrow">IDENTIFICATION REQUIRED</div>
+        <h2 id="nameTitle">CREATE MISSION</h2>
+        <p>Choose a callsign. Keep it short. Everyone in the facility will see it.</p>
+        <input id="nameInput" maxlength="18" autocomplete="off" placeholder="YOUR CALLSIGN" />
+        <div id="roomCodeWrap" class="hidden">
+          <label>ROOM CODE</label>
+          <input id="roomInput" maxlength="5" autocomplete="off" placeholder="ABCDE" class="room-input" />
+        </div>
+        <div id="nameError" class="form-error"></div>
+        <button id="nameContinue" class="primary-btn">CONTINUE <span>→</span></button>
+        <button id="backLanding" class="text-btn">← BACK</button>
+      </div>
+    </section>
+
+    <section id="screenLobby" class="screen">
+      <div class="lobby-layout">
+        <div class="lobby-main">
+          <div class="section-head">
+            <div><div class="eyebrow">FACILITY 09 // ASSEMBLY</div><h2>MISSION LOBBY</h2></div>
+            <div class="room-badge"><span>ROOM</span><strong id="roomCodeDisplay">-----</strong><button id="copyRoom" title="Copy room code">⧉</button></div>
+          </div>
+          <div class="status-banner"><span class="status-light"></span><span id="lobbyStatus">WAITING FOR SURVIVORS</span></div>
+          <div id="playerGrid" class="player-grid"></div>
+          <button id="startBtn" class="primary-btn lobby-start" disabled>START PROTOCOL <span>→</span></button>
+          <div id="startHint" class="hint">Waiting for at least 2 players. The host can start the mission.</div>
+        </div>
+        <aside class="chat-panel glass">
+          <div class="panel-title"><span>FACILITY COMMS</span><span class="online-count">● SECURE</span></div>
+          <div id="chatMessages" class="chat-messages"></div>
+          <form id="chatForm" class="chat-form"><input id="chatInput" maxlength="160" placeholder="Transmit message..." autocomplete="off"><button>↑</button></form>
+        </aside>
+      </div>
+    </section>
+
+    <section id="screenBriefing" class="screen centered">
+      <div class="briefing-card">
+        <div class="briefing-symbol">⚠</div>
+        <div class="eyebrow">EMERGENCY PROTOCOL</div>
+        <h2>FACILITY FAILURE<br>DETECTED</h2>
+        <p>Every round gives you a different incident and a private clue. You have seconds to decide. Discuss fast. The facility is already counting.</p>
+        <div class="brief-count" id="briefCount">3</div>
+      </div>
+    </section>
+
+    <section id="screenGame" class="screen">
+      <div class="game-layout">
+        <div class="game-main">
+          <div class="game-topline">
+            <div><span class="round-label">ROUND <b id="roundNo">01</b> / <b id="roundTotal">05</b></span><span class="sector" id="sectorText">SECTOR --</span></div>
+            <div class="timer-wrap"><span>DECISION WINDOW</span><strong id="timer">14</strong></div>
+          </div>
+          <div class="progress"><div id="timerBar"></div></div>
+          <div class="incident-card glass">
+            <div class="incident-meta"><span id="threatBadge" class="threat">CRITICAL</span><span id="scenarioTitle">REACTOR CORE FAILURE</span></div>
+            <h2 id="incidentText">Containment pressure is rising.</h2>
+            <div class="clue-box"><div class="clue-label">PRIVATE INTEL // ONLY YOU CAN SEE THIS</div><div id="clueText">Your private clue appears here.</div></div>
+          </div>
+          <div id="choices" class="choices"></div>
+          <div id="decisionStatus" class="decision-status">SELECT ONE RESPONSE</div>
+        </div>
+        <aside class="side-column">
+          <div class="players-panel glass"><div class="panel-title"><span>SURVIVOR STATUS</span><span id="aliveCount">0 ALIVE</span></div><div id="gamePlayers" class="game-players"></div></div>
+          <div class="chat-panel glass game-chat"><div class="panel-title"><span>FACILITY COMMS</span><span>LIVE</span></div><div id="gameChatMessages" class="chat-messages"></div><form id="gameChatForm" class="chat-form"><input id="gameChatInput" maxlength="160" placeholder="Transmit..."><button>↑</button></form></div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="screenResult" class="screen centered">
+      <div class="result-card glass">
+        <div id="resultKicker" class="eyebrow">ROUND RESOLUTION</div>
+        <h2 id="resultTitle">THE FACILITY HAS SPOKEN</h2>
+        <p id="resultText">Review the choices. Someone is not coming back.</p>
+        <div id="resultRows" class="result-rows"></div>
+        <div id="overrideNotice" class="override hidden">⚡ EMERGENCY OVERRIDE: THE FACILITY REFUSED TO LET EVERYONE DIE.</div>
+        <div class="result-countdown">NEXT EVENT IN <span id="nextRoundCountdown">4</span></div>
+      </div>
+    </section>
+
+    <section id="screenGameover" class="screen centered">
+      <div class="winner-card">
+        <div class="winner-glitch">SYSTEM STABLE</div>
+        <div class="eyebrow">PROTOCOL COMPLETE</div>
+        <div class="winner-crown">✦</div>
+        <h2 id="winnerName">SURVIVOR</h2>
+        <p>THE FACILITY HAS A SINGLE SURVIVOR.</p>
+        <div id="leaderboard" class="leaderboard"></div>
+        <button id="restartBtn" class="primary-btn">RESTART PROTOCOL <span>↻</span></button>
+        <button id="returnBtn" class="text-btn">RETURN TO TITLE</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast"></div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/client.js"></script>
+</body>
+</html>
